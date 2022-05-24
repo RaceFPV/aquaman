@@ -11,7 +11,10 @@ Aquaman is a utility container which was designed to be a great way to interact 
 - aws-cli
 - kubectl
 - rancher-cli
+- azure-cli
+- gcp-cli (google cloud sdk)
 - terraform
+- pulumi
 
   You should not include/store any secrets or passwords within this container, instead they should be passed to the container as environment variables at runtime.
 
