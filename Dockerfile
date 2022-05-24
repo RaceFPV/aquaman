@@ -3,8 +3,9 @@ FROM alpine:latest
 ENV TERRAFORM_VERSION 1.2.1
 ENV RANCHER_VERSION v2.6.5
 ARG PULUMI_VERSION=latest
+ARG HELM_VERSION=3.9.0
 
-#add curl, wget, ssh-client, ansible
+#add curl, wget, ssh-client, ansible, etc
 RUN apk --update --no-cache add \
     bash \
     ca-certificates \
@@ -66,3 +67,21 @@ RUN apk update && \
     else \
       curl -fsSL https://get.pulumi.com/ | sh -s -- --version $(echo $PULUMI_VERSION | cut -c 2-); \
     fi
+
+#download and install helm
+ENV BASE_URL="https://get.helm.sh"
+
+RUN case `uname -m` in \
+        x86_64) ARCH=amd64; ;; \
+        armv7l) ARCH=arm; ;; \
+        aarch64) ARCH=arm64; ;; \
+        ppc64le) ARCH=ppc64le; ;; \
+        s390x) ARCH=s390x; ;; \
+        *) echo "un-supported arch, exit ..."; exit 1; ;; \
+    esac && \
+    wget ${BASE_URL}/helm-v${HELM_VERSION}-linux-${ARCH}.tar.gz -O - | tar -xz && \
+    mv linux-${ARCH}/helm /usr/bin/helm && \
+    chmod +x /usr/bin/helm && \
+    rm -rf linux-${ARCH}
+
+RUN chmod +x /usr/bin/helm
